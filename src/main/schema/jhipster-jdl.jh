@@ -1,0 +1,39 @@
+entity Book {
+	title String,
+    genre BookGenre,
+    nbPages Integer min(1),
+    publicationYear Integer min(-220),
+    rating Integer min(1) max(5)
+}
+
+enum BookGenre {
+	SCIFI,
+    FANTASY,
+    COMEDY,
+    DRAMA,
+    HORROR,
+    NOVEL,
+    SATIRE,
+    TRAGEDY,
+    ROMANCE,
+    BIOGRAPHY,
+    EDUCATION
+}
+
+entity Author {
+	firstName String,
+    lastName String
+}
+
+relationship OneToOne {
+	Book{author} to Author
+}
+
+// Turn on pagination
+paginate Book, Author with pagination
+
+// Map Beans to DTOs using MapStruct - http://mapstruct.org/
+dto * with mapstruct
+
+// Generate service layers in front of the data layers
+service all with serviceImpl
