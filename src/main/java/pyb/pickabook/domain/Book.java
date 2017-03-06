@@ -22,28 +22,33 @@ public class Book implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "title")
+    @NotNull
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "genre")
+    @Column(name = "genre", nullable = false)
     private BookGenre genre;
 
+    @NotNull
     @Min(value = 1)
-    @Column(name = "nb_pages")
+    @Column(name = "nb_pages", nullable = false)
     private Integer nbPages;
 
+    @NotNull
     @Min(value = -220)
-    @Column(name = "publication_year")
+    @Column(name = "publication_year", nullable = false)
     private Integer publicationYear;
 
+    @NotNull
     @Min(value = 1)
     @Max(value = 5)
-    @Column(name = "rating")
+    @Column(name = "rating", nullable = false)
     private Integer rating;
 
-    @OneToOne
-    @JoinColumn(unique = true)
+    @ManyToOne(optional = false)
+    @NotNull
     private Author author;
 
     public Long getId() {

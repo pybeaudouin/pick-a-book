@@ -143,6 +143,44 @@ public class AuthorResourceIntTest {
 
     @Test
     @Transactional
+    public void checkFirstNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = authorRepository.findAll().size();
+        // set the field null
+        author.setFirstName(null);
+
+        // Create the Author, which fails.
+        AuthorDTO authorDTO = authorMapper.authorToAuthorDTO(author);
+
+        restAuthorMockMvc.perform(post("/api/authors")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(authorDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Author> authorList = authorRepository.findAll();
+        assertThat(authorList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkLastNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = authorRepository.findAll().size();
+        // set the field null
+        author.setLastName(null);
+
+        // Create the Author, which fails.
+        AuthorDTO authorDTO = authorMapper.authorToAuthorDTO(author);
+
+        restAuthorMockMvc.perform(post("/api/authors")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(authorDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Author> authorList = authorRepository.findAll();
+        assertThat(authorList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllAuthors() throws Exception {
         // Initialize the database
         authorRepository.saveAndFlush(author);

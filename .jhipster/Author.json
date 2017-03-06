@@ -1,14 +1,27 @@
 {
     "fluentMethods": true,
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipType": "one-to-many",
+            "relationshipName": "book",
+            "otherEntityName": "book",
+            "otherEntityRelationshipName": "author"
+        }
+    ],
     "fields": [
         {
             "fieldName": "firstName",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "lastName",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20170306012639",

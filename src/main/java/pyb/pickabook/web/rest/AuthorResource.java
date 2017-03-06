@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.LinkedList;
@@ -49,7 +50,7 @@ public class AuthorResource {
      */
     @PostMapping("/authors")
     @Timed
-    public ResponseEntity<AuthorDTO> createAuthor(@RequestBody AuthorDTO authorDTO) throws URISyntaxException {
+    public ResponseEntity<AuthorDTO> createAuthor(@Valid @RequestBody AuthorDTO authorDTO) throws URISyntaxException {
         log.debug("REST request to save Author : {}", authorDTO);
         if (authorDTO.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert(ENTITY_NAME, "idexists", "A new author cannot already have an ID")).body(null);
@@ -71,7 +72,7 @@ public class AuthorResource {
      */
     @PutMapping("/authors")
     @Timed
-    public ResponseEntity<AuthorDTO> updateAuthor(@RequestBody AuthorDTO authorDTO) throws URISyntaxException {
+    public ResponseEntity<AuthorDTO> updateAuthor(@Valid @RequestBody AuthorDTO authorDTO) throws URISyntaxException {
         log.debug("REST request to update Author : {}", authorDTO);
         if (authorDTO.getId() == null) {
             return createAuthor(authorDTO);

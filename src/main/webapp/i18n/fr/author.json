@@ -16,7 +16,8 @@
                 "title": "Author"
             },
             "firstName": "First Name",
-            "lastName": "Last Name"
+            "lastName": "Last Name",
+            "book": "Book"
         }
     }
 }

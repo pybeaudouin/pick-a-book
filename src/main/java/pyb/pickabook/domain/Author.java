@@ -1,8 +1,12 @@
 package pyb.pickabook.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -19,11 +23,17 @@ public class Author implements Serializable {
     @SequenceGenerator(name = "sequenceGenerator")
     private Long id;
 
-    @Column(name = "first_name")
+    @NotNull
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @NotNull
+    @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnore
+    private Set<Book> books = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -57,6 +67,31 @@ public class Author implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Set<Book> getBooks() {
+        return books;
+    }
+
+    public Author books(Set<Book> books) {
+        this.books = books;
+        return this;
+    }
+
+    public Author addBook(Book book) {
+        this.books.add(book);
+        book.setAuthor(this);
+        return this;
+    }
+
+    public Author removeBook(Book book) {
+        this.books.remove(book);
+        book.setAuthor(null);
+        return this;
+    }
+
+    public void setBooks(Set<Book> books) {
+        this.books = books;
     }
 
     @Override

@@ -2,29 +2,35 @@
     "fluentMethods": true,
     "relationships": [
         {
-            "relationshipType": "one-to-one",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": "required",
             "relationshipName": "author",
             "otherEntityName": "author",
-            "otherEntityField": "id",
-            "ownerSide": true,
-            "otherEntityRelationshipName": "book"
+            "otherEntityField": "id"
         }
     ],
     "fields": [
         {
             "fieldName": "title",
-            "fieldType": "String"
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "genre",
             "fieldType": "BookGenre",
-            "fieldValues": "SCIFI,FANTASY,COMEDY,DRAMA,HORROR,NOVEL,SATIRE,TRAGEDY,ROMANCE,BIOGRAPHY,EDUCATION"
+            "fieldValues": "SCIFI,FANTASY,COMEDY,DRAMA,HORROR,NOVEL,SATIRE,TRAGEDY,ROMANCE,BIOGRAPHY,EDUCATION",
+            "fieldValidateRules": [
+                "required"
+            ]
         },
         {
             "fieldName": "nbPages",
             "fieldType": "Integer",
             "fieldValidateRules": [
-                "min"
+                "min",
+                "required"
             ],
             "fieldValidateRulesMin": 1
         },
@@ -32,7 +38,8 @@
             "fieldName": "publicationYear",
             "fieldType": "Integer",
             "fieldValidateRules": [
-                "min"
+                "min",
+                "required"
             ],
             "fieldValidateRulesMin": -220
         },
@@ -41,7 +48,8 @@
             "fieldType": "Integer",
             "fieldValidateRules": [
                 "min",
-                "max"
+                "max",
+                "required"
             ],
             "fieldValidateRulesMin": 1,
             "fieldValidateRulesMax": 5

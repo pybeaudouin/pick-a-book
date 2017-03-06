@@ -1,9 +1,9 @@
 entity Book {
-	title String,
-    genre BookGenre,
-    nbPages Integer min(1),
-    publicationYear Integer min(-220),
-    rating Integer min(1) max(5)
+	title String required,
+    genre BookGenre required,
+    nbPages Integer min(1) required,
+    publicationYear Integer min(-220) required,
+    rating Integer min(1) max(5) required
 }
 
 enum BookGenre {
@@ -21,12 +21,12 @@ enum BookGenre {
 }
 
 entity Author {
-	firstName String,
-    lastName String
+	firstName String required,
+    lastName String required
 }
 
-relationship OneToOne {
-	Book{author} to Author
+relationship OneToMany {
+  Author{book} to Book{author required}
 }
 
 // Turn on pagination

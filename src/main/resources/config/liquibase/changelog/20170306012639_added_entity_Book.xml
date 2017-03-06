@@ -22,27 +22,29 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="title" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
 
             <column name="genre" type="varchar(255)">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
 
             <column name="nb_pages" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
 
             <column name="publication_year" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
 
             <column name="rating" type="integer">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
+
             <column name="author_id" type="bigint">
-                <constraints unique="true" nullable="true" />
+                <constraints nullable="false" />
             </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         

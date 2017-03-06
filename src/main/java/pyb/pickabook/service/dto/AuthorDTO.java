@@ -1,7 +1,10 @@
 package pyb.pickabook.service.dto;
 
 
+import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -11,8 +14,10 @@ public class AuthorDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
     private String firstName;
 
+    @NotNull
     private String lastName;
 
     public Long getId() {

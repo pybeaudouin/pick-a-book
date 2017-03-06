@@ -5,23 +5,15 @@
         .module('pickabookApp')
         .controller('BookDialogController', BookDialogController);
 
-    BookDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', '$q', 'entity', 'Book', 'Author'];
+    BookDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', 'entity', 'Book', 'Author'];
 
-    function BookDialogController ($timeout, $scope, $stateParams, $uibModalInstance, $q, entity, Book, Author) {
+    function BookDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Book, Author) {
         var vm = this;
 
         vm.book = entity;
         vm.clear = clear;
         vm.save = save;
-        vm.authors = Author.query({filter: 'book-is-null'});
-        $q.all([vm.book.$promise, vm.authors.$promise]).then(function() {
-            if (!vm.book.authorId) {
-                return $q.reject();
-            }
-            return Author.get({id : vm.book.authorId}).$promise;
-        }).then(function(author) {
-            vm.authors.push(author);
-        });
+        vm.authors = Author.query();
 
         $timeout(function (){
             angular.element('.form-group:eq(1)>input').focus();

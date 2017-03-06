@@ -3,6 +3,7 @@ package pyb.pickabook.web.rest;
 import pyb.pickabook.PickabookApp;
 
 import pyb.pickabook.domain.Book;
+import pyb.pickabook.domain.Author;
 import pyb.pickabook.repository.BookRepository;
 import pyb.pickabook.service.BookService;
 import pyb.pickabook.service.dto.BookDTO;
@@ -104,6 +105,11 @@ public class BookResourceIntTest {
                 .nbPages(DEFAULT_NB_PAGES)
                 .publicationYear(DEFAULT_PUBLICATION_YEAR)
                 .rating(DEFAULT_RATING);
+        // Add required entity
+        Author author = AuthorResourceIntTest.createEntity(em);
+        em.persist(author);
+        em.flush();
+        book.setAuthor(author);
         return book;
     }
 
@@ -155,6 +161,101 @@ public class BookResourceIntTest {
         // Validate the Alice in the database
         List<Book> bookList = bookRepository.findAll();
         assertThat(bookList).hasSize(databaseSizeBeforeCreate);
+    }
+
+    @Test
+    @Transactional
+    public void checkTitleIsRequired() throws Exception {
+        int databaseSizeBeforeTest = bookRepository.findAll().size();
+        // set the field null
+        book.setTitle(null);
+
+        // Create the Book, which fails.
+        BookDTO bookDTO = bookMapper.bookToBookDTO(book);
+
+        restBookMockMvc.perform(post("/api/books")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bookDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Book> bookList = bookRepository.findAll();
+        assertThat(bookList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkGenreIsRequired() throws Exception {
+        int databaseSizeBeforeTest = bookRepository.findAll().size();
+        // set the field null
+        book.setGenre(null);
+
+        // Create the Book, which fails.
+        BookDTO bookDTO = bookMapper.bookToBookDTO(book);
+
+        restBookMockMvc.perform(post("/api/books")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bookDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Book> bookList = bookRepository.findAll();
+        assertThat(bookList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkNbPagesIsRequired() throws Exception {
+        int databaseSizeBeforeTest = bookRepository.findAll().size();
+        // set the field null
+        book.setNbPages(null);
+
+        // Create the Book, which fails.
+        BookDTO bookDTO = bookMapper.bookToBookDTO(book);
+
+        restBookMockMvc.perform(post("/api/books")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bookDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Book> bookList = bookRepository.findAll();
+        assertThat(bookList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkPublicationYearIsRequired() throws Exception {
+        int databaseSizeBeforeTest = bookRepository.findAll().size();
+        // set the field null
+        book.setPublicationYear(null);
+
+        // Create the Book, which fails.
+        BookDTO bookDTO = bookMapper.bookToBookDTO(book);
+
+        restBookMockMvc.perform(post("/api/books")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bookDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Book> bookList = bookRepository.findAll();
+        assertThat(bookList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    public void checkRatingIsRequired() throws Exception {
+        int databaseSizeBeforeTest = bookRepository.findAll().size();
+        // set the field null
+        book.setRating(null);
+
+        // Create the Book, which fails.
+        BookDTO bookDTO = bookMapper.bookToBookDTO(book);
+
+        restBookMockMvc.perform(post("/api/books")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(bookDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Book> bookList = bookRepository.findAll();
+        assertThat(bookList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test

@@ -15,16 +15,21 @@ public class BookDTO implements Serializable {
 
     private Long id;
 
+    @NotNull
     private String title;
 
+    @NotNull
     private BookGenre genre;
 
+    @NotNull
     @Min(value = 1)
     private Integer nbPages;
 
+    @NotNull
     @Min(value = -220)
     private Integer publicationYear;
 
+    @NotNull
     @Min(value = 1)
     @Max(value = 5)
     private Integer rating;

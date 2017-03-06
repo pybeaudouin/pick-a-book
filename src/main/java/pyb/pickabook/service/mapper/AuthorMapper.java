@@ -16,6 +16,7 @@ public interface AuthorMapper {
 
     List<AuthorDTO> authorsToAuthorDTOs(List<Author> authors);
 
+    @Mapping(target = "books", ignore = true)
     Author authorDTOToAuthor(AuthorDTO authorDTO);
 
     List<Author> authorDTOsToAuthors(List<AuthorDTO> authorDTOs);

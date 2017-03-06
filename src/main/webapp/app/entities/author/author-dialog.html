@@ -1,5 +1,5 @@
 
-<form name="editForm" role="form" novalidate ng-submit="vm.save()">
+<form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation>
 
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
@@ -17,13 +17,25 @@
             <label class="control-label" data-translate="pickabookApp.author.firstName" for="field_firstName">First Name</label>
             <input type="text" class="form-control" name="firstName" id="field_firstName"
                     ng-model="vm.author.firstName"
-                    />
+                    required/>
+            <div ng-show="editForm.firstName.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.firstName.$error.required" data-translate="entity.validation.required">
+                    This field is required.
+                </p>
+            </div>
         </div>
         <div class="form-group">
             <label class="control-label" data-translate="pickabookApp.author.lastName" for="field_lastName">Last Name</label>
             <input type="text" class="form-control" name="lastName" id="field_lastName"
                     ng-model="vm.author.lastName"
-                    />
+                    required/>
+            <div ng-show="editForm.lastName.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.lastName.$error.required" data-translate="entity.validation.required">
+                    This field is required.
+                </p>
+            </div>
         </div>
 
     </div>
