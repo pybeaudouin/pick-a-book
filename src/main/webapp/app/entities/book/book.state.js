@@ -29,7 +29,7 @@
                     squash: true
                 },
                 sort: {
-                    value: 'id,asc',
+                    value: 'title,asc',
                     squash: true
                 },
                 search: null
