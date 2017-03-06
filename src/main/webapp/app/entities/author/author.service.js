@@ -9,7 +9,7 @@
     function Author ($resource) {
         var resourceUrl =  'api/authors/:id';
 
-        return $resource(resourceUrl, {}, {
+        var resource = $resource(resourceUrl, {}, {
             'query': { method: 'GET', isArray: true},
             'get': {
                 method: 'GET',
@@ -27,5 +27,17 @@
             },
             'update': { method:'PUT' }
         });
+
+        var augment = function(author) {
+            // Inject methods to DTOs
+            angular.extend(author, {
+                getFullName : function() { return this.firstName + " " + this.lastName; }
+            });
+            return author;
+        };
+        
+        resource.augment = augment;
+        
+        return resource;
     }
 })();

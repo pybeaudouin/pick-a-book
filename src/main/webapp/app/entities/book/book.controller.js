@@ -5,9 +5,9 @@
         .module('pickabookApp')
         .controller('BookController', BookController);
 
-    BookController.$inject = ['$state', 'Book', 'ParseLinks', 'AlertService', 'paginationConstants', 'pagingParams'];
+    BookController.$inject = ['$state', 'Book', 'Author', 'ParseLinks', 'AlertService', 'paginationConstants', 'pagingParams'];
 
-    function BookController($state, Book, ParseLinks, AlertService, paginationConstants, pagingParams) {
+    function BookController($state, Book, Author, ParseLinks, AlertService, paginationConstants, pagingParams) {
 
         var vm = this;
 
@@ -37,6 +37,9 @@
                 vm.totalItems = headers('X-Total-Count');
                 vm.queryCount = vm.totalItems;
                 vm.books = data;
+                vm.books.forEach(function(book) {
+                	Author.augment(book.author);
+                });
                 vm.page = pagingParams.page;
             }
             function onError(error) {
