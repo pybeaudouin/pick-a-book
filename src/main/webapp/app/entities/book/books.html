@@ -35,7 +35,7 @@
                     <td>{{book.publicationYear}}</td>
                     <td>{{book.rating}}</td>
                     <td>
-                        <a ui-sref="author-detail({id:book.authorId})">{{book.authorId}}</a>
+                        <a ui-sref="author-detail({id:book.authorId})">{{book.author.getFullName()}}</a>
                     </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
