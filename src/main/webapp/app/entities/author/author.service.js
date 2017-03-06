@@ -28,16 +28,14 @@
             'update': { method:'PUT' }
         });
 
-        var augment = function(author) {
+        resource.augment = function(author) {
             // Inject methods to DTOs
             angular.extend(author, {
                 getFullName : function() { return this.firstName + " " + this.lastName; }
             });
             return author;
         };
-        
-        resource.augment = augment;
-        
+
         return resource;
     }
 })();
