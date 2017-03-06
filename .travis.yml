@@ -32,6 +32,7 @@ install:
   - yarn install
 script:
   - chmod +x mvnw
+  - ./mvnw --version
   - ./mvnw clean test
   - gulp test
 notifications:
