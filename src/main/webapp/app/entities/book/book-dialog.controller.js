@@ -11,9 +11,26 @@
         var vm = this;
 
         vm.book = entity;
+        
+        // Inject methods to DTOs (FIXME: refactor)
+        angular.extend(vm.book.author, {
+            getFullName : function() { return this.firstName + " " + this.lastName; }
+        });
+
         vm.clear = clear;
         vm.save = save;
-        vm.authors = Author.query();
+
+        var authors = Author.query(function() {
+            authors.forEach(function(author) {
+                // Inject methods to DTOs (FIXME: refactor)
+                angular.extend(author, {
+                    getFullName: function () {
+                        return this.firstName + " " + this.lastName;
+                    }
+                });
+            });
+        });
+        vm.authors = authors;
 
         $timeout(function (){
             angular.element('.form-group:eq(1)>input').focus();
