@@ -1,0 +1,106 @@
+
+<form name="editForm" role="form" novalidate ng-submit="vm.save()" show-validation>
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                ng-click="vm.clear()">&times;</button>
+        <h4 class="modal-title" id="myBookLabel" data-translate="pickabookApp.book.home.createOrEditLabel">Create or edit a Book</h4>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <div class="form-group" ng-show="vm.book.id">
+            <label for="id" data-translate="global.field.id">ID</label>
+            <input type="text" class="form-control" id="id" name="id"
+                    ng-model="vm.book.id" readonly />
+        </div>
+        <div class="form-group">
+            <label class="control-label" data-translate="pickabookApp.book.title" for="field_title">Title</label>
+            <input type="text" class="form-control" name="title" id="field_title"
+                    ng-model="vm.book.title"
+                    />
+        </div>
+        <div class="form-group">
+            <label class="control-label" data-translate="pickabookApp.book.genre" for="field_genre">Genre</label>
+            <select class="form-control" name="genre" ng-model="vm.book.genre" id="field_genre">
+                <option value="SCIFI" data-translate="pickabookApp.BookGenre.SCIFI">SCIFI</option>
+                <option value="FANTASY" data-translate="pickabookApp.BookGenre.FANTASY">FANTASY</option>
+                <option value="COMEDY" data-translate="pickabookApp.BookGenre.COMEDY">COMEDY</option>
+                <option value="DRAMA" data-translate="pickabookApp.BookGenre.DRAMA">DRAMA</option>
+                <option value="HORROR" data-translate="pickabookApp.BookGenre.HORROR">HORROR</option>
+                <option value="NOVEL" data-translate="pickabookApp.BookGenre.NOVEL">NOVEL</option>
+                <option value="SATIRE" data-translate="pickabookApp.BookGenre.SATIRE">SATIRE</option>
+                <option value="TRAGEDY" data-translate="pickabookApp.BookGenre.TRAGEDY">TRAGEDY</option>
+                <option value="ROMANCE" data-translate="pickabookApp.BookGenre.ROMANCE">ROMANCE</option>
+                <option value="BIOGRAPHY" data-translate="pickabookApp.BookGenre.BIOGRAPHY">BIOGRAPHY</option>
+                <option value="EDUCATION" data-translate="pickabookApp.BookGenre.EDUCATION">EDUCATION</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="control-label" data-translate="pickabookApp.book.nbPages" for="field_nbPages">Nb Pages</label>
+            <input type="number" class="form-control" name="nbPages" id="field_nbPages"
+                    ng-model="vm.book.nbPages"
+                    min="1"/>
+            <div ng-show="editForm.nbPages.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.nbPages.$error.min" data-translate="entity.validation.min" translate-value-min="1">
+                    This field should be at least 1.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.nbPages.$error.number" data-translate="entity.validation.number">
+                    This field should be a number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" data-translate="pickabookApp.book.publicationYear" for="field_publicationYear">Publication Year</label>
+            <input type="number" class="form-control" name="publicationYear" id="field_publicationYear"
+                    ng-model="vm.book.publicationYear"
+                    min="-220"/>
+            <div ng-show="editForm.publicationYear.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.publicationYear.$error.min" data-translate="entity.validation.min" translate-value-min="-220">
+                    This field should be at least -220.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.publicationYear.$error.number" data-translate="entity.validation.number">
+                    This field should be a number.
+                </p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label" data-translate="pickabookApp.book.rating" for="field_rating">Rating</label>
+            <input type="number" class="form-control" name="rating" id="field_rating"
+                    ng-model="vm.book.rating"
+                    min="1" max="5"/>
+            <div ng-show="editForm.rating.$invalid">
+                <p class="help-block"
+                    ng-show="editForm.rating.$error.min" data-translate="entity.validation.min" translate-value-min="1">
+                    This field should be at least 1.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.rating.$error.max" data-translate="entity.validation.max" translate-value-max="5">
+                    This field cannot be more than 5.
+                </p>
+                <p class="help-block"
+                    ng-show="editForm.rating.$error.number" data-translate="entity.validation.number">
+                    This field should be a number.
+                </p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label data-translate="pickabookApp.book.author" for="field_author">Author</label>
+            <select class="form-control" id="field_author" name="author" ng-model="vm.book.authorId" ng-options="author.id as author.id for author in vm.authors | orderBy:'id'">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="vm.clear()">
+            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span data-translate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" ng-disabled="editForm.$invalid || vm.isSaving" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>&nbsp;<span data-translate="entity.action.save">Save</span>
+        </button>
+    </div>
+</form>

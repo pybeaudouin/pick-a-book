@@ -1,0 +1,18 @@
+{
+    "pickabookApp": {
+        "BookGenre" : {
+            "null": "",
+            "SCIFI": "SCIFI",
+            "FANTASY": "FANTASY",
+            "COMEDY": "COMEDY",
+            "DRAMA": "DRAMA",
+            "HORROR": "HORROR",
+            "NOVEL": "NOVEL",
+            "SATIRE": "SATIRE",
+            "TRAGEDY": "TRAGEDY",
+            "ROMANCE": "ROMANCE",
+            "BIOGRAPHY": "BIOGRAPHY",
+            "EDUCATION": "EDUCATION"
+        }
+    }
+}
