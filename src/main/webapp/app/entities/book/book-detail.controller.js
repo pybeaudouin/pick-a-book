@@ -11,8 +11,8 @@
         var vm = this;
 
         vm.book = entity;
-        Author.augment(vm.book.author);
-        
+        vm.book.author && Author.augment(vm.book.author);
+
         vm.previousState = previousState.name;
 
         var unsubscribe = $rootScope.$on('pickabookApp:bookUpdate', function(event, result) {
