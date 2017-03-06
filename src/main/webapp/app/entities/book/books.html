@@ -18,7 +18,6 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
-                    <th jh-sort-by="id"><span data-translate="global.field.id">ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="title"><span data-translate="pickabookApp.book.title">Title</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="genre"><span data-translate="pickabookApp.book.genre">Genre</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="nbPages"><span data-translate="pickabookApp.book.nbPages">Nb Pages</span> <span class="glyphicon glyphicon-sort"></span></th>
@@ -30,8 +29,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="book in vm.books track by book.id">
-                    <td><a ui-sref="book-detail({id:book.id})">{{book.id}}</a></td>
-                    <td>{{book.title}}</td>
+                    <td><a ui-sref="book-detail({id:book.id})">{{book.title}}</a></td>
                     <td data-translate="{{'pickabookApp.BookGenre.' + book.genre}}">{{book.genre}}</td>
                     <td>{{book.nbPages}}</td>
                     <td>{{book.publicationYear}}</td>
