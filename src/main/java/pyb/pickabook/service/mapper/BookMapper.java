@@ -1,10 +1,14 @@
 package pyb.pickabook.service.mapper;
 
-import pyb.pickabook.domain.*;
-import pyb.pickabook.service.dto.BookDTO;
-
-import org.mapstruct.*;
 import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+import pyb.pickabook.domain.Author;
+import pyb.pickabook.domain.Book;
+import pyb.pickabook.service.dto.AuthorDTO;
+import pyb.pickabook.service.dto.BookDTO;
 
 /**
  * Mapper for the entity Book and its DTO BookDTO.
@@ -12,12 +16,12 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {})
 public interface BookMapper {
 
-    @Mapping(source = "author.id", target = "authorId")
+	@Mapping(source = "author", target = "author")
     BookDTO bookToBookDTO(Book book);
 
     List<BookDTO> booksToBookDTOs(List<Book> books);
 
-    @Mapping(source = "authorId", target = "author")
+	@Mapping(source = "author", target = "author")
     Book bookDTOToBook(BookDTO bookDTO);
 
     List<Book> bookDTOsToBooks(List<BookDTO> bookDTOs);
@@ -30,4 +34,9 @@ public interface BookMapper {
         author.setId(id);
         return author;
     }
+
+	AuthorDTO authorToAuthorDTO(Author author);
+
+	@Mapping(target = "books", ignore = true)
+	Author authorDTOToAuthor(AuthorDTO authorDTO);
 }

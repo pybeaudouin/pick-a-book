@@ -26,7 +26,7 @@
         </dd>
         <dt><span data-translate="pickabookApp.book.author">Author</span></dt>
         <dd>
-            <a ui-sref="author-detail({id:vm.book.authorId})">{{vm.book.authorId}}</a>
+            <a ui-sref="author-detail({id:vm.book.author.id})">{{vm.book.author.getFullName()}}</a>
         </dd>
     </dl>
 

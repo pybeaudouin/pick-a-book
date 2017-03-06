@@ -1,11 +1,13 @@
 package pyb.pickabook.service.dto;
 
 
-import javax.validation.constraints.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import pyb.pickabook.domain.enumeration.BookGenre;
 
 /**
@@ -34,7 +36,7 @@ public class BookDTO implements Serializable {
     @Max(value = 5)
     private Integer rating;
 
-    private Long authorId;
+	private AuthorDTO author;
 
     public Long getId() {
         return id;
@@ -79,12 +81,12 @@ public class BookDTO implements Serializable {
         this.rating = rating;
     }
 
-    public Long getAuthorId() {
-        return authorId;
+	public AuthorDTO getAuthor() {
+		return author;
     }
 
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
+	public void setAuthor(AuthorDTO author) {
+		this.author = author;
     }
 
     @Override
