@@ -1,0 +1,14 @@
+language: node_js
+node_js:
+- "6.10.0"
+cache:
+  yarn: true
+  directories:
+    - $HOME/.m2
+    - $HOME/.gradle
+    - $HOME/.yarn-cache
+    - node_modules
+
+before_script:
+  - npm install -g gulp
+script: gulp
