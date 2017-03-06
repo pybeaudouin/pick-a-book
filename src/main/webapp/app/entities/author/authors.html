@@ -18,7 +18,6 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr jh-sort="vm.predicate" ascending="vm.reverse" callback="vm.transition()">
-                    <th jh-sort-by="id"><span data-translate="global.field.id">ID</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="firstName"><span data-translate="pickabookApp.author.firstName">First Name</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th jh-sort-by="lastName"><span data-translate="pickabookApp.author.lastName">Last Name</span> <span class="glyphicon glyphicon-sort"></span></th>
                     <th></th>
@@ -26,8 +25,7 @@
             </thead>
             <tbody>
                 <tr ng-repeat="author in vm.authors track by author.id">
-                    <td><a ui-sref="author-detail({id:author.id})">{{author.id}}</a></td>
-                    <td>{{author.firstName}}</td>
+                    <td><a ui-sref="author-detail({id:author.id})">{{author.firstName}}</a></td>
                     <td>{{author.lastName}}</td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
