@@ -16,6 +16,11 @@
                 transformResponse: function (data) {
                     if (data) {
                         data = angular.fromJson(data);
+
+                        // Inject methods to DTOs
+                        angular.extend(data, {
+                            getFullName : function() { return this.firstName + " " + this.lastName; }
+                        });
                     }
                     return data;
                 }
