@@ -1,14 +1,18 @@
 package pyb.pickabook.web.rest;
 
-import pyb.pickabook.PickabookApp;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import pyb.pickabook.domain.Book;
-import pyb.pickabook.domain.Author;
-import pyb.pickabook.repository.BookRepository;
-import pyb.pickabook.service.BookService;
-import pyb.pickabook.service.dto.BookDTO;
-import pyb.pickabook.service.mapper.BookMapper;
-import pyb.pickabook.web.rest.errors.ExceptionTranslator;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,15 +28,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import pyb.pickabook.PickabookApp;
+import pyb.pickabook.domain.Author;
+import pyb.pickabook.domain.Book;
 import pyb.pickabook.domain.enumeration.BookGenre;
+import pyb.pickabook.repository.BookRepository;
+import pyb.pickabook.service.BookService;
+import pyb.pickabook.service.dto.BookDTO;
+import pyb.pickabook.service.mapper.BookMapper;
+import pyb.pickabook.web.rest.errors.ExceptionTranslator;
 /**
  * Test class for the BookResource REST controller.
  *
@@ -372,6 +376,7 @@ public class BookResourceIntTest {
     }
 
     @Test
+	@Transactional
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Book.class);
     }
