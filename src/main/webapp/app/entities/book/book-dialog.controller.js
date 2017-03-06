@@ -11,9 +11,9 @@
         var vm = this;
 
         vm.book = entity;
-        
+
         // Inject methods to DTOs (FIXME: refactor)
-        angular.extend(vm.book.author, {
+        vm.book.author && angular.extend(vm.book.author, {
             getFullName : function() { return this.firstName + " " + this.lastName; }
         });
 
