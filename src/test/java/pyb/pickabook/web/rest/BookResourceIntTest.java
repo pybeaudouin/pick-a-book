@@ -15,6 +15,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -497,6 +498,7 @@ public class BookResourceIntTest {
 				.andExpect(bookAtJsonPosition(book, 1));
 	}
 
+	@Ignore("Incomplete")
 	@Test
 	@Transactional
 	public void getSuggestions1stCriterionByAuthorAndMatching2ndByPages()

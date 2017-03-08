@@ -15,6 +15,9 @@ import pyb.pickabook.domain.Book;
 import pyb.pickabook.repository.BookRepository;
 import pyb.pickabook.service.BookService;
 import pyb.pickabook.service.dto.BookDTO;
+import pyb.pickabook.service.dto.preference.AbstractPreferenceDTO;
+import pyb.pickabook.service.dto.preference.AuthorPreferenceDTO;
+import pyb.pickabook.service.dto.preference.ReadingPreferencesDTO;
 import pyb.pickabook.service.mapper.BookMapper;
 
 /**
@@ -99,9 +102,18 @@ public class BookServiceImpl implements BookService{
 	public List<BookDTO> findSuggestions(ReadingPreferencesDTO readingPreferences) throws InvalidPreferenceException {
 		log.debug("Request for suggestions : {}", readingPreferences);
 
-		List<Book> all = bookRepository.findAll();
-		// TODO Stub: to be implemented
-		return bookMapper.booksToBookDTOs(all.subList(0, all.size())); // skip last
+		// TODO: to be plugged with BookRepository
+		buildSuggestionQuery(readingPreferences);
+
+		List<Book> suggestions;
+		List<AbstractPreferenceDTO> preferences = readingPreferences.buildCriteriaListRanked();
+		if (preferences.isEmpty()) {
+			suggestions = bookRepository.findAllByOrderByTitle();
+		} else {
+			suggestions = bookRepository.findSuggestions(readingPreferences.getAuthorPreference().getAuthor().getId());
+		}
+
+		return bookMapper.booksToBookDTOs(suggestions);
 	}
 
 }
