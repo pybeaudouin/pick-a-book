@@ -1,20 +1,17 @@
 package pyb.pickabook.service.impl;
 
-import pyb.pickabook.service.AuthorService;
-import pyb.pickabook.domain.Author;
-import pyb.pickabook.repository.AuthorRepository;
-import pyb.pickabook.service.dto.AuthorDTO;
-import pyb.pickabook.service.mapper.AuthorMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import pyb.pickabook.domain.Author;
+import pyb.pickabook.repository.AuthorRepository;
+import pyb.pickabook.service.AuthorService;
+import pyb.pickabook.service.dto.AuthorDTO;
+import pyb.pickabook.service.mapper.AuthorMapper;
 
 /**
  * Service Implementation for managing Author.
@@ -27,7 +24,7 @@ public class AuthorServiceImpl implements AuthorService{
     
     private final AuthorRepository authorRepository;
 
-    private final AuthorMapper authorMapper;
+	private final AuthorMapper authorMapper;
 
     public AuthorServiceImpl(AuthorRepository authorRepository, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
