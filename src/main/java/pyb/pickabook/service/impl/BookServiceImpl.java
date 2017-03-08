@@ -18,6 +18,8 @@ import pyb.pickabook.service.dto.BookDTO;
 import pyb.pickabook.service.dto.preference.AbstractPreferenceDTO;
 import pyb.pickabook.service.dto.preference.AuthorPreferenceDTO;
 import pyb.pickabook.service.dto.preference.ReadingPreferencesDTO;
+import pyb.pickabook.service.impl.book.criteria.AuthorCriteriaBuilder;
+import pyb.pickabook.service.impl.book.criteria.CriteriaBuilder;
 import pyb.pickabook.service.mapper.BookMapper;
 
 /**
@@ -102,18 +104,26 @@ public class BookServiceImpl implements BookService{
 	public List<BookDTO> findSuggestions(ReadingPreferencesDTO readingPreferences) throws InvalidPreferenceException {
 		log.debug("Request for suggestions : {}", readingPreferences);
 
-		// TODO: to be plugged with BookRepository
-		buildSuggestionQuery(readingPreferences);
-
-		List<Book> suggestions;
+		String orderBy = "b.title";
 		List<AbstractPreferenceDTO> preferences = readingPreferences.buildCriteriaListRanked();
-		if (preferences.isEmpty()) {
-			suggestions = bookRepository.findAllByOrderByTitle();
-		} else {
-			suggestions = bookRepository.findSuggestions(readingPreferences.getAuthorPreference().getAuthor().getId());
+		if (!preferences.isEmpty()) {
+			orderBy = buildSuggestionQuery(readingPreferences) + ", " + orderBy;
 		}
 
+		List<Book> suggestions = bookRepository.findSuggestions(orderBy);
 		return bookMapper.booksToBookDTOs(suggestions);
+	}
+
+	private String buildSuggestionQuery(ReadingPreferencesDTO readingPreferences) throws InvalidPreferenceException {
+		StringBuilder result = new StringBuilder();
+		for (AbstractPreferenceDTO preference : readingPreferences.buildCriteriaListRanked()) {
+			if (preference instanceof AuthorPreferenceDTO) {
+				AuthorPreferenceDTO authorPreference = (AuthorPreferenceDTO) preference;
+				AuthorCriteriaBuilder builder = (AuthorCriteriaBuilder) criteriaBuilders.get(AuthorPreferenceDTO.class);
+				result.append(builder.build(authorPreference));
+			}
+		}
+		return result.toString();
 	}
 
 }
