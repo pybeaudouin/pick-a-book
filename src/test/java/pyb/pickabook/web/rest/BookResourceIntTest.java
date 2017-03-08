@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -25,6 +27,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultHandler;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +38,12 @@ import pyb.pickabook.PickabookApp;
 import pyb.pickabook.domain.Author;
 import pyb.pickabook.domain.Book;
 import pyb.pickabook.domain.enumeration.BookGenre;
+import pyb.pickabook.repository.AuthorRepository;
 import pyb.pickabook.repository.BookRepository;
 import pyb.pickabook.service.BookService;
 import pyb.pickabook.service.dto.BookDTO;
+import pyb.pickabook.service.dto.preference.ReadingPreferencesDTO;
+import pyb.pickabook.service.mapper.AuthorMapper;
 import pyb.pickabook.service.mapper.BookMapper;
 import pyb.pickabook.web.rest.errors.ExceptionTranslator;
 /**
@@ -46,10 +55,12 @@ import pyb.pickabook.web.rest.errors.ExceptionTranslator;
 @SpringBootTest(classes = PickabookApp.class)
 public class BookResourceIntTest {
 
+	private final Logger log = LoggerFactory.getLogger(BookResourceIntTest.class);
+
     private static final String DEFAULT_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_TITLE = "BBBBBBBBBB";
 
-    private static final BookGenre DEFAULT_GENRE = BookGenre.SCIFI;
+	private static final BookGenre DEFAULT_GENRE = BookGenre.EDUCATION;
     private static final BookGenre UPDATED_GENRE = BookGenre.FANTASY;
 
     private static final Integer DEFAULT_NB_PAGES = 1;
@@ -60,11 +71,19 @@ public class BookResourceIntTest {
 
     private static final Integer DEFAULT_RATING = 1;
     private static final Integer UPDATED_RATING = 2;
+    
+    private static final String SUGGESTIONS_URL = "/api/books/suggestions";
 
     @Autowired
+	private AuthorRepository authorRepository;
+
+	@Autowired
     private BookRepository bookRepository;
 
     @Autowired
+	private AuthorMapper authorMapper;
+
+	@Autowired
     private BookMapper bookMapper;
 
     @Autowired
@@ -85,6 +104,8 @@ public class BookResourceIntTest {
     private MockMvc restBookMockMvc;
 
     private Book book;
+
+	private Author AEvanVogt = new Author("Alfred Elton", "van Vogt");
 
     @Before
     public void setup() {
@@ -120,6 +141,7 @@ public class BookResourceIntTest {
     @Before
     public void initTest() {
         book = createEntity(em);
+		AEvanVogt = new Author("Alfred Elton", "van Vogt");
     }
 
     @Test
@@ -380,4 +402,247 @@ public class BookResourceIntTest {
     public void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(Book.class);
     }
+
+	/**
+	 * No reading preferences is equivalent to no book matching the preferences.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	public void getSuggestionsWithNoSuggestions() throws Exception {
+		getSuggestionsMatchingNone();
+	}
+
+	// TODO: criteria with same rank
+	// @Test
+	// @Transactional
+	// public void getSuggestionsWithInvalidSuggestions() throws Exception {}
+
+	@Test
+	@Transactional
+	public void getSuggestionsWithNoBooks() throws Exception {
+		// Arrange
+		bookRepository.deleteAll();
+		int databaseSize = bookRepository.findAll().size();
+		assertThat(databaseSize)
+			.withFailMessage("The database needs no book for this test to run, found %s book(s).", databaseSize)
+			.isZero();
+
+		em.persist(AEvanVogt);
+		authorRepository.saveAndFlush(AEvanVogt);
+
+		ReadingPreferencesDTO readingPreferencesDTO = new ReadingPreferencesDTO();
+		readingPreferencesDTO.author(authorMapper.authorToAuthorDTO(AEvanVogt));
+
+		log.debug("PYB> HTTP query " + readingPreferencesDTO);
+
+		// Act
+		restBookMockMvc.perform(
+				suggestionsHttpMethod(SUGGESTIONS_URL)
+	            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(readingPreferencesDTO)))
+				// Assert
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(TestUtil.APPLICATION_JSON_UTF8))
+				.andExpect(content().string("[]"));
+	}
+
+	// TODO: getSuggestionsWithNonExistingAuthor
+
+	@Test
+	@Transactional
+	public void getSuggestions1stCriterionByAuthorAndMatching() throws Exception {
+		// Arrange
+		em.persist(book);
+		em.persist(AEvanVogt);
+
+		Book bookByAEVV = new Book()
+				.author(AEvanVogt)
+				.title("The Book of Ptath")
+				.genre(BookGenre.SCIFI)
+				.nbPages(221)
+				.publicationYear(1947)
+				.rating(4);
+		em.persist(bookByAEVV);
+
+		int databaseSize = bookRepository.findAll().size();
+		assertThat(databaseSize)
+			.withFailMessage("The database needs at least 2 books for this test to run, found %s book(s).", databaseSize)
+			.isGreaterThan(1);
+		
+		ReadingPreferencesDTO readingPreferencesDTO = new ReadingPreferencesDTO();
+		readingPreferencesDTO.author(authorMapper.authorToAuthorDTO(AEvanVogt));
+
+		log.debug("PYB> HTTP query " + readingPreferencesDTO);
+
+		// Act
+		restBookMockMvc.perform(
+				suggestionsHttpMethod(SUGGESTIONS_URL)
+	            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(readingPreferencesDTO)))
+				.andDo(new ResultHandler() {
+
+					@Override
+					public void handle(MvcResult result) throws Exception {
+						log.debug("PYB> " + result.getResponse().getContentAsString());
+					}
+				})
+				// Assert
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(jsonPath("$.length()").value(databaseSize))
+				// 1st book: matches Author
+				.andExpect(bookAtJsonPosition(bookByAEVV, 0))
+				// 2nd book: no match
+				.andExpect(bookAtJsonPosition(book, 1));
+	}
+
+	@Test
+	@Transactional
+	public void getSuggestions1stCriterionByAuthorAndMatching2ndByPages()
+			throws Exception {
+
+		// Arrange
+		em.persist(book);
+		em.persist(AEvanVogt);
+		
+		Book bookByAEVV = new Book()
+				.author(AEvanVogt)
+				.title("The Book of Ptath")
+				.genre(BookGenre.SCIFI)
+				.nbPages(221)
+				.publicationYear(1947)
+				.rating(4);
+		em.persist(bookByAEVV);
+		
+		Book secondBookByAEVV = new Book()
+				.author(AEvanVogt)
+				.title("The House That Stood Still")
+				.genre(BookGenre.SCIFI)
+				.nbPages(210)
+				.publicationYear(1950)
+				.rating(5);
+		em.persist(secondBookByAEVV);
+
+		int databaseSize = bookRepository.findAll().size();
+		assertThat(databaseSize)
+			.withFailMessage("The database needs at least 3 books for this test to run, found %s book(s).", databaseSize)
+			.isGreaterThan(2);
+		
+		ReadingPreferencesDTO readingPreferencesDTO = new ReadingPreferencesDTO();
+		readingPreferencesDTO.author(authorMapper.authorToAuthorDTO(AEvanVogt));
+		// TODO: implement second reading preference, e.g. nb of pages
+
+		log.debug("PYB> HTTP query " + readingPreferencesDTO);
+
+		// Act
+		restBookMockMvc.perform(
+				suggestionsHttpMethod(SUGGESTIONS_URL)
+	            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(readingPreferencesDTO)))
+				.andDo(new ResultHandler() {
+
+					@Override
+					public void handle(MvcResult result) throws Exception {
+						log.debug("PYB> " + result.getResponse().getContentAsString());
+					}
+				})
+				// Assert
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(jsonPath("$.length()").value(databaseSize))
+				// 1st book: matches Author
+				.andExpect(bookAtJsonPosition(bookByAEVV, 0))
+				// 2nd book: no match
+				.andExpect(bookAtJsonPosition(book, 1));
+	}
+
+	/**
+	 * No book satisfies the search criteria. Tests the default book ordering.
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	public void getSuggestionsMatchingNone() throws Exception {
+		// Arrange
+		em.persist(AEvanVogt);
+		
+		Book bookByAEVV = new Book()
+				.author(AEvanVogt)
+				.title("The Book of Ptath")
+				.genre(BookGenre.SCIFI)
+				.nbPages(221)
+				.publicationYear(1947)
+				.rating(4);
+		
+		Book secondBookByAEVV = new Book()
+				.author(AEvanVogt)
+				.title("The House That Stood Still")
+				.genre(BookGenre.SCIFI)
+				.nbPages(210)
+				.publicationYear(1950)
+				.rating(5);
+		
+		// Persist the 2nd book first to validate we don't get books in insertion order
+		em.persist(bookByAEVV);
+		em.persist(secondBookByAEVV);
+
+		int databaseSize = bookRepository.findAll().size();
+		assertThat(databaseSize)
+			.withFailMessage("The database needs at least 2 books for this test to run, found %s book(s).", databaseSize)
+			.isGreaterThan(1);
+		
+		// Act
+		ReadingPreferencesDTO readingPreferencesDTO = new ReadingPreferencesDTO();
+		// object voluntarily left empty
+
+		log.debug("PYB> HTTP query " + readingPreferencesDTO);
+
+		// Act
+		restBookMockMvc.perform(
+				suggestionsHttpMethod(SUGGESTIONS_URL)
+	            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+				.content(TestUtil.convertObjectToJsonBytes(readingPreferencesDTO)))
+				.andDo(new ResultHandler() {
+
+					@Override
+					public void handle(MvcResult result) throws Exception {
+						log.debug("PYB> " + result.getResponse().getContentAsString());
+					}
+				})
+				// Assert
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(jsonPath("$.length()").value(databaseSize))
+				// 1st book: "The Book of Ptath" is alphabetically before "The House That Stood Still"
+				.andExpect(bookAtJsonPosition(bookByAEVV, 0))
+				// 2nd book: "The House That Stood Still"
+				.andExpect(bookAtJsonPosition(secondBookByAEVV, 1));
+	}
+
+	/** Abstracts the HTTP method used for the /books/suggestions endpoint. */
+	private static MockHttpServletRequestBuilder suggestionsHttpMethod(String urlTemplate, Object... uriVars) {
+		return post(urlTemplate, uriVars);
+	}
+
+	/**
+	 * Test the presence of a book at a given position in a JSON array.
+	 * 
+	 * @param book
+	 * @param jsonPosition
+	 *            Position of the book in a JSON array, starts at 0.
+	 * @return
+	 */
+	private ResultMatcher bookAtJsonPosition(Book b, int jsonPosition) {
+		return new ResultMatcher() {
+			@Override
+			public void match(MvcResult result) {
+				jsonPath("$.[" + jsonPosition + "].id").value(b.getId().intValue());
+				jsonPath("$.[" + jsonPosition + "].title").value(b.getTitle());
+				jsonPath("$.[" + jsonPosition + "].genre").value(b.getGenre().name());
+				jsonPath("$.[" + jsonPosition + "].nbPages").value(b.getNbPages());
+				jsonPath("$.[" + jsonPosition + "].publicationYear").value(b.getPublicationYear());
+				jsonPath("$.[" + jsonPosition + "].rating").value(b.getRating());
+			}
+		};
+	}
 }
