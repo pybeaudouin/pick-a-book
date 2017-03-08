@@ -9,6 +9,7 @@ jdk:
   - oraclejdk8
 sudo: false
 cache:
+  yarn: true
   directories:
     - node
     - node_modules
