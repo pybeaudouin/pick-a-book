@@ -37,6 +37,5 @@ public interface BookMapper {
 
 	AuthorDTO authorToAuthorDTO(Author author);
 
-	@Mapping(target = "books", ignore = true)
 	Author authorDTOToAuthor(AuthorDTO authorDTO);
 }

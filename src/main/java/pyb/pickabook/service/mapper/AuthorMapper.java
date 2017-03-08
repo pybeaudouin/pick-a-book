@@ -1,10 +1,11 @@
 package pyb.pickabook.service.mapper;
 
-import pyb.pickabook.domain.*;
-import pyb.pickabook.service.dto.AuthorDTO;
-
-import org.mapstruct.*;
 import java.util.List;
+
+import org.mapstruct.Mapper;
+
+import pyb.pickabook.domain.Author;
+import pyb.pickabook.service.dto.AuthorDTO;
 
 /**
  * Mapper for the entity Author and its DTO AuthorDTO.
@@ -16,7 +17,6 @@ public interface AuthorMapper {
 
     List<AuthorDTO> authorsToAuthorDTOs(List<Author> authors);
 
-    @Mapping(target = "books", ignore = true)
     Author authorDTOToAuthor(AuthorDTO authorDTO);
 
     List<Author> authorDTOsToAuthors(List<AuthorDTO> authorDTOs);
