@@ -1,20 +1,21 @@
 package pyb.pickabook.service.impl;
 
-import pyb.pickabook.service.BookService;
-import pyb.pickabook.domain.Book;
-import pyb.pickabook.repository.BookRepository;
-import pyb.pickabook.service.dto.BookDTO;
-import pyb.pickabook.service.mapper.BookMapper;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import pyb.pickabook.domain.Book;
+import pyb.pickabook.repository.BookRepository;
+import pyb.pickabook.service.BookService;
+import pyb.pickabook.service.dto.BookDTO;
+import pyb.pickabook.service.mapper.BookMapper;
 
 /**
  * Service Implementation for managing Book.
@@ -24,10 +25,15 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService{
 
     private final Logger log = LoggerFactory.getLogger(BookServiceImpl.class);
-    
+
     private final BookRepository bookRepository;
 
     private final BookMapper bookMapper;
+
+	private static final Map<Class<? extends AbstractPreferenceDTO>, CriteriaBuilder<? extends AbstractPreferenceDTO>> criteriaBuilders = new HashMap<>();
+	static {
+		criteriaBuilders.put(AuthorPreferenceDTO.class, new AuthorCriteriaBuilder());
+	}
 
     public BookServiceImpl(BookRepository bookRepository, BookMapper bookMapper) {
         this.bookRepository = bookRepository;
@@ -51,7 +57,7 @@ public class BookServiceImpl implements BookService{
 
     /**
      *  Get all the books.
-     *  
+     *
      *  @param pageable the pagination information
      *  @return the list of entities
      */
@@ -88,4 +94,14 @@ public class BookServiceImpl implements BookService{
         log.debug("Request to delete Book : {}", id);
         bookRepository.delete(id);
     }
+
+	@Override
+	public List<BookDTO> findSuggestions(ReadingPreferencesDTO readingPreferences) throws InvalidPreferenceException {
+		log.debug("Request for suggestions : {}", readingPreferences);
+
+		List<Book> all = bookRepository.findAll();
+		// TODO Stub: to be implemented
+		return bookMapper.booksToBookDTOs(all.subList(0, all.size())); // skip last
+	}
+
 }
